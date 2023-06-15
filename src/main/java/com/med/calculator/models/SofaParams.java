@@ -1,30 +1,33 @@
 package com.med.calculator.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
+@Schema(description = "Сущность параметров для шкалы SOFA")
 public class SofaParams {
 
-    // респираторный индекс Каррико
+    @Schema(description = "Парциальное напряжение кислорода")
     private int paO2;
+
+    @Schema(description = "Концентрация кислорода на вдохе")
     private int fio2;
-    // респираторный индекс Каррико
 
+    @Schema(description = "Тромбоциты")
+    private int platelets;
 
-    private int platelets; // Тромбоциты
+    @Schema(description = "Билирубин")
+    private int bilirubin;
 
+    @Schema(description = "Тип оценки почечной функции")
+    private boolean liverCheck;
 
-    private int bilirubin; //Билирубин
+    @Schema(description = "Параметр содержащий в себе значение креатинин/суточный диурез")
+    private int liverParam;
 
+    @Schema(description = "Среднее артериальное давление")
+    private int hypotensia;
 
-    private boolean liverCheck; // Вид оценки почечной функции
-
-
-    private int liverParam; // Креатинин или суточный диурез
-
-
-    private int hypotensia; // Среднее артериальное давление или нуждаеомсть в вазопроцессорах
-
-
-    private int gcs; // Шкала комы Глазго
+    @Schema(description = "Результат вычисления шкалы комы Глазго")
+    private int gcs;
 }

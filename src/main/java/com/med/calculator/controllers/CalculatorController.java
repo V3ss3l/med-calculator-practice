@@ -4,17 +4,20 @@ import com.med.calculator.models.*;
 import com.med.calculator.services.ChildPhewService;
 import com.med.calculator.services.HeartService;
 import com.med.calculator.services.SofaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Dictionary;
 import java.util.HashMap;
 
 @RestController
 @Slf4j
 @CrossOrigin(origins = "http://localhost:4200")
+@Tag(name="Контроллер калькуляторов", description = "Данный контроллер обрабатывает запросы, связанные с медицинскими калькуляторами")
 public class CalculatorController {
 
     private final HashMap<String, String> infoMap = new HashMap<>();
@@ -36,10 +39,10 @@ public class CalculatorController {
             method = RequestMethod.GET,
             produces = "application/json"
     )
+    @Operation(summary = "Получение информации о калькуляторе SOFA", description = "Данный метод обрабатывает запросы по получению краткой информации о калькуляторе SOFA. Возвращает JSON с сущностью InfoEntity, хранящей информацию")
     public ResponseEntity<InfoEntity> getSofaInfo(){
         var entity = new InfoEntity();
         entity.setInfo(infoMap.get("sofa"));
-        log.warn("jasdflksdajfklsdklfjksdlfjklsdjfkljsdkljfkl");
         return new ResponseEntity<InfoEntity>(entity, HttpStatusCode.valueOf(200));
     }
 
@@ -48,6 +51,7 @@ public class CalculatorController {
             method = RequestMethod.GET,
             produces = "application/json"
     )
+    @Operation(summary = "Получение информации о калькуляторе HEART", description = "Данный метод обрабатывает запросы по получению краткой информации о калькуляторе HEART. Возвращает JSON с сущностью InfoEntity, хранящей информацию")
     public ResponseEntity<InfoEntity> getHeartInfo(){
         var entity = new InfoEntity();
         entity.setInfo(infoMap.get("heart"));
@@ -59,6 +63,7 @@ public class CalculatorController {
             method = RequestMethod.GET,
             produces = "application/json"
     )
+    @Operation(summary = "Получение информации о калькуляторе Чайлд Пью", description = "Данный метод обрабатывает запросы по получению краткой информации о калькуляторе Чайлд Пью. Возвращает JSON с сущностью InfoEntity, хранящей информацию")
     public ResponseEntity<InfoEntity> getChildPhewInfo(){
         var entity = new InfoEntity();
         entity.setInfo(infoMap.get("child"));
@@ -71,7 +76,8 @@ public class CalculatorController {
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<ResultEntity> CalculateSofaScore(@RequestBody SofaParams params){
+    @Operation(summary = "Подсчет баллов по шкале SOFA", description = "Данный метод обрабатывает запросы, связанные с подсчетом баллов по данному критерию. Принимает и отправляет - JSON. Результат вычисления содержится в сущности ResultEntity в поле result.")
+    public ResponseEntity<ResultEntity> CalculateSofaScore(@RequestBody @Parameter(name = "Параметры для шкалы SOFA") SofaParams params){
         log.info("Sofa Params - {}", params);
         ResultEntity result = sofaService.ResultCalculationToScore(params);
         log.info("CalcResult - {}", result);
@@ -87,7 +93,8 @@ public class CalculatorController {
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<ResultEntity> CalculateChildPhewScore(@RequestBody ChildPhewParams params){
+    @Operation(summary = "Подсчет баллов по шкале Чайлд Пью", description = "Данный метод обрабатывает запросы, связанные с подсчетом баллов по данному критерию. Принимает и отправляет - JSON. Результат вычисления содержится в сущности ResultEntity в поле result.")
+    public ResponseEntity<ResultEntity> CalculateChildPhewScore(@RequestBody @Parameter(name = "Параметры для шкалы Чайлд Пью") ChildPhewParams params){
         log.info("ChildPhew Params - {}", params);
         ResultEntity result = childService.ResultCalculationToScore(params);
         log.info("CalcResult - {}", result);
@@ -103,7 +110,8 @@ public class CalculatorController {
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<ResultEntity> CalculateHeartScore(@RequestBody HeartParams params){
+    @Operation(summary = "Подсчет баллов по шкале HEART", description = "Данный метод обрабатывает запросы, связанные с подсчетом баллов по данному критерию. Принимает и отправляет - JSON. Результат вычисления содержится в сущности ResultEntity в поле result.")
+    public ResponseEntity<ResultEntity> CalculateHeartScore(@RequestBody @Parameter(name = "Параметры для шкалы HEART") HeartParams params){
         log.info("Heart Params - {}", params);
         ResultEntity result = heartService.ResultCalculationToScore(params);
         log.info("CalcResult - {}", result);
@@ -112,12 +120,4 @@ public class CalculatorController {
         }
         else return new ResponseEntity<ResultEntity>(HttpStatusCode.valueOf(204));
     }
-
-    /*@RequestMapping(
-            value = "/calculator/sofa/info",
-            method = RequestMethod.GET,
-            produces = "application/json"
-    )
-    public ResponseEntity<InfoEntity> ShowSofaCalcInfo(){
-    }*/
 }

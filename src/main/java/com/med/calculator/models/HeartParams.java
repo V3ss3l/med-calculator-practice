@@ -1,17 +1,24 @@
 package com.med.calculator.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
+@Schema(description = "Сущность параметров для шкалы HEART")
 public class HeartParams {
 
-    private int age; // Возраст
+    @Schema(description = "Возраст")
+    private int age;
 
-    private int anamnez; // Анамнез
+    @Schema(description = "Анамнез")
+    private int anamnez;
 
-    private int ecg; //  ЭКГ
+    @Schema(description = "ЭКГ")
+    private int ecg;
 
-    private int riskFactor; // Факторы риска
+    @Schema(description = "Факторы риска")
+    private int riskFactor;
 
-    private int troponin; // Исходный тропонин
+    @Schema(description = "Исходный тропонин")
+    private int troponin;
 }

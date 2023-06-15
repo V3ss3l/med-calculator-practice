@@ -1,18 +1,25 @@
 package com.med.calculator.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
+@Schema(description = "Сущность параметров для шкалы Чайлд Пью")
 public class ChildPhewParams {
 
-    private int bilirubin; //Билирубин
+    @Schema(description = "Билирубин")
+    private int bilirubin;
 
-    private int albumin; // Альбумин
+    @Schema(description = "Альбумин")
+    private int albumin;
 
-    private int mho; //  MHO
+    @Schema(description = "МНО")
+    private int mho;
 
-    private int ascit; // Асцит
+    @Schema(description = "Асцит")
+    private int ascit;
 
-    private int enceph; // Энцефалопатия
+    @Schema(description = "Энцефалопатия")
+    private int enceph;
 
 }

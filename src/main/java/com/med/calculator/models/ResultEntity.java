@@ -1,13 +1,15 @@
 package com.med.calculator.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
+@Schema(description = "Резултирующая сущность")
 public class ResultEntity {
-    // результат вычисления в виде баллов
+    @Schema(description = "Результат вычисления в виде баллов")
     private int result;
-    // результат трансляции баллов в информацию для пациентов
+    @Schema(description = "Результат трансляции баллов в информацию для пациентов")
     private String info;
-    // дополнительная информация для трансляции результатов
+    @Schema(description = "Дополнительная информация для трансляции результатов")
     private String addInfo;
 }
