@@ -10,7 +10,7 @@ public class HeartService {
 
     public ResultEntity ResultCalculationToScore(HeartParams params){
         ResultEntity res = new ResultEntity();
-        int resultScore = params.getAge() + params.getAnamnez() + params.getEcg() +  params.getRiskFactor() + params.getTroponin();
+        int resultScore = params.getAnamnez() + params.getEcg() +  params.getRiskFactor() + params.getTroponin();
         res.setResult(resultScore);
         if(params.getTroponin() > 0) res.setAddInfo("Если тропонин положительный, многие эксперты рекомендуют госпиталицию и дальнейший осмотр и наблюдение.");
         if(resultScore >= 0 && resultScore < 4) res.setInfo("0.9 - 1.7% риск ОССС. 0.99% (ретроспективный анализ), 1.7% (проспективный анализ) пациентов были выписаны.");

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 public class SofaService {
 
     private int RespiratoryIndexCalculationToScore(int pao2, int fio2){
+        if(fio2 == 0) return -1;
         int ri = (pao2/fio2)*100;
         if(ri >= 400) return 0;
         else if (ri < 400 && ri >= 300) return 1;
@@ -54,7 +55,7 @@ public class SofaService {
         int biliScore = BiliCalculationToScore(params.getBilirubin());
         int liverScore = LiverParamsCalculationToScore(params.isLiverCheck(), params.getLiverParam());
 
-        if(liverScore == -1) return null;
+        if(liverScore == -1 || respScore == -1) return null;
 
         int resultCalc = respScore + platScore + biliScore + liverScore + params.getHypotensia() + params.getGcs();
         res.setResult(resultCalc);
