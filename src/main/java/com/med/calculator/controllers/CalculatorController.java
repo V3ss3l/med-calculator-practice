@@ -1,5 +1,6 @@
 package com.med.calculator.controllers;
 
+import com.med.calculator.exceptions.ApiRequestException;
 import com.med.calculator.models.*;
 import com.med.calculator.services.ChildPhewService;
 import com.med.calculator.services.HeartService;
@@ -23,7 +24,6 @@ public class CalculatorController {
     private final HashMap<String, String> infoMap = new HashMap<>();
     private final SofaService sofaService;
     private final ChildPhewService childService;
-
     private final HeartService heartService;
 
     CalculatorController(SofaService sofaService, ChildPhewService childService, HeartService heartService) {
@@ -77,14 +77,13 @@ public class CalculatorController {
             produces = "application/json"
     )
     @Operation(summary = "Подсчет баллов по шкале SOFA", description = "Данный метод обрабатывает запросы, связанные с подсчетом баллов по данному критерию. Принимает и отправляет - JSON. Результат вычисления содержится в сущности ResultEntity в поле result.")
-    public ResponseEntity<ResultEntity> CalculateSofaScore(@RequestBody @Parameter(name = "Параметры для шкалы SOFA") SofaParams params){
+    public ResponseEntity<ResultEntity> CalculateSofaScore(@RequestBody @Parameter(name = "Параметры для шкалы SOFA") SofaParams params) throws ApiRequestException{
         log.info("Sofa Params - {}", params);
         ResultEntity result = sofaService.ResultCalculationToScore(params);
         log.info("CalcResult - {}", result);
         if (result != null) {
-            return new ResponseEntity<ResultEntity>(result, HttpStatusCode.valueOf(200));
-        }
-        else return new ResponseEntity<ResultEntity>(HttpStatusCode.valueOf(204));
+            return new ResponseEntity<ResultEntity>(result, HttpStatusCode.valueOf(201));
+        } else throw new ApiRequestException("Calculation was not completed, check params!");
     }
 
     @RequestMapping(
@@ -98,10 +97,7 @@ public class CalculatorController {
         log.info("ChildPhew Params - {}", params);
         ResultEntity result = childService.ResultCalculationToScore(params);
         log.info("CalcResult - {}", result);
-        if (result != null) {
-            return new ResponseEntity<ResultEntity>(result, HttpStatusCode.valueOf(200));
-        }
-        else return new ResponseEntity<ResultEntity>(HttpStatusCode.valueOf(204));
+        return new ResponseEntity<ResultEntity>(result, HttpStatusCode.valueOf(201));
     }
 
     @RequestMapping(
@@ -115,9 +111,6 @@ public class CalculatorController {
         log.info("Heart Params - {}", params);
         ResultEntity result = heartService.ResultCalculationToScore(params);
         log.info("CalcResult - {}", result);
-        if (result != null) {
-            return new ResponseEntity<ResultEntity>(result, HttpStatusCode.valueOf(200));
-        }
-        else return new ResponseEntity<ResultEntity>(HttpStatusCode.valueOf(204));
+        return new ResponseEntity<ResultEntity>(result, HttpStatusCode.valueOf(201));
     }
 }
