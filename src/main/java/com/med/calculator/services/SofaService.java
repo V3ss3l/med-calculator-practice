@@ -5,7 +5,7 @@ import com.med.calculator.models.SofaParams;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SofaService {
+public class SofaService implements CalculatorService<SofaParams>{
 
     private int RespiratoryIndexCalculationToScore(int pao2, int fio2){
         if(fio2 == 0) return -1;
@@ -48,8 +48,8 @@ public class SofaService {
         return -1;
     }
 
-    public ResultEntity ResultCalculationToScore(SofaParams params){
-        ResultEntity res = new ResultEntity();
+    @Override
+    public ResultEntity CalculateScore(SofaParams params) {
         int respScore = RespiratoryIndexCalculationToScore(params.getPaO2(), params.getFio2());
         int platScore = PlatCalculationToScore(params.getPlatelets());
         int biliScore = BiliCalculationToScore(params.getBilirubin());
@@ -58,18 +58,24 @@ public class SofaService {
         if(liverScore == -1 || respScore == -1) return null;
 
         int resultCalc = respScore + platScore + biliScore + liverScore + params.getHypotensia() + params.getGcs();
-        res.setResult(resultCalc);
+        return ResultCalculation(resultCalc);
+    }
 
-        if(resultCalc == 2) {
+    @Override
+    public ResultEntity ResultCalculation(int score) {
+        ResultEntity res = new ResultEntity();
+        res.setResult(score);
+
+        if(score == 2) {
             res.setInfo("Летальность: 10%");
         }
-        else if(resultCalc>2 && resultCalc<9){
+        else if(score>2 && score<9){
             res.setInfo("Летальность: <33%");
         }
-        else if(resultCalc>=9 && resultCalc<=11){
+        else if(score>=9 && score<=11){
             res.setInfo("Летальность: 40 - 50%");
         }
-        else if(resultCalc>11){
+        else if(score > 11){
             res.setInfo("Летальность: 95%");
         }
         return res;

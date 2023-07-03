@@ -8,12 +8,18 @@ import com.med.calculator.services.SofaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -40,10 +46,10 @@ public class CalculatorController {
             produces = "application/json"
     )
     @Operation(summary = "Получение информации о калькуляторе SOFA", description = "Данный метод обрабатывает запросы по получению краткой информации о калькуляторе SOFA. Возвращает JSON с сущностью InfoEntity, хранящей информацию")
-    public ResponseEntity<InfoEntity> getSofaInfo(){
+    public InfoEntity getSofaInfo(){
         var entity = new InfoEntity();
         entity.setInfo(infoMap.get("sofa"));
-        return new ResponseEntity<InfoEntity>(entity, HttpStatusCode.valueOf(200));
+        return entity;
     }
 
     @RequestMapping(
@@ -52,10 +58,10 @@ public class CalculatorController {
             produces = "application/json"
     )
     @Operation(summary = "Получение информации о калькуляторе HEART", description = "Данный метод обрабатывает запросы по получению краткой информации о калькуляторе HEART. Возвращает JSON с сущностью InfoEntity, хранящей информацию")
-    public ResponseEntity<InfoEntity> getHeartInfo(){
+    public InfoEntity getHeartInfo(){
         var entity = new InfoEntity();
         entity.setInfo(infoMap.get("heart"));
-        return new ResponseEntity<InfoEntity>(entity, HttpStatusCode.valueOf(200));
+        return entity;
     }
 
     @RequestMapping(
@@ -64,10 +70,10 @@ public class CalculatorController {
             produces = "application/json"
     )
     @Operation(summary = "Получение информации о калькуляторе Чайлд Пью", description = "Данный метод обрабатывает запросы по получению краткой информации о калькуляторе Чайлд Пью. Возвращает JSON с сущностью InfoEntity, хранящей информацию")
-    public ResponseEntity<InfoEntity> getChildPhewInfo(){
+    public InfoEntity getChildPhewInfo(){
         var entity = new InfoEntity();
         entity.setInfo(infoMap.get("child"));
-        return new ResponseEntity<InfoEntity>(entity, HttpStatusCode.valueOf(200));
+        return entity;
     }
 
     @RequestMapping(
@@ -76,14 +82,16 @@ public class CalculatorController {
             consumes = "application/json",
             produces = "application/json"
     )
+    @SneakyThrows(value = {ApiRequestException.class})
     @Operation(summary = "Подсчет баллов по шкале SOFA", description = "Данный метод обрабатывает запросы, связанные с подсчетом баллов по данному критерию. Принимает и отправляет - JSON. Результат вычисления содержится в сущности ResultEntity в поле result.")
-    public ResponseEntity<ResultEntity> CalculateSofaScore(@RequestBody @Parameter(name = "Параметры для шкалы SOFA") SofaParams params) throws ApiRequestException{
+    public ResultEntity CalculateSofaScore(@RequestBody @Valid @Parameter(name = "Параметры для шкалы SOFA") SofaParams params){
         log.info("Sofa Params - {}", params);
-        ResultEntity result = sofaService.ResultCalculationToScore(params);
+        ResultEntity result = sofaService.CalculateScore(params);
         log.info("CalcResult - {}", result);
-        if (result != null) {
-            return new ResponseEntity<ResultEntity>(result, HttpStatusCode.valueOf(201));
-        } else throw new ApiRequestException("Calculation was not completed, check params!");
+        if(result == null){
+            throw new ApiRequestException("Calculation was aborted, check the params");
+        }
+        return result;
     }
 
     @RequestMapping(
@@ -92,12 +100,13 @@ public class CalculatorController {
             consumes = "application/json",
             produces = "application/json"
     )
+    @SneakyThrows
     @Operation(summary = "Подсчет баллов по шкале Чайлд Пью", description = "Данный метод обрабатывает запросы, связанные с подсчетом баллов по данному критерию. Принимает и отправляет - JSON. Результат вычисления содержится в сущности ResultEntity в поле result.")
-    public ResponseEntity<ResultEntity> CalculateChildPhewScore(@RequestBody @Parameter(name = "Параметры для шкалы Чайлд Пью") ChildPhewParams params){
+    public ResultEntity CalculateChildPhewScore(@RequestBody @Valid @Parameter(name = "Параметры для шкалы Чайлд Пью") ChildPhewParams params){
         log.info("ChildPhew Params - {}", params);
-        ResultEntity result = childService.ResultCalculationToScore(params);
+        ResultEntity result = childService.CalculateScore(params);
         log.info("CalcResult - {}", result);
-        return new ResponseEntity<ResultEntity>(result, HttpStatusCode.valueOf(201));
+        return result;
     }
 
     @RequestMapping(
@@ -106,11 +115,12 @@ public class CalculatorController {
             consumes = "application/json",
             produces = "application/json"
     )
+    @SneakyThrows
     @Operation(summary = "Подсчет баллов по шкале HEART", description = "Данный метод обрабатывает запросы, связанные с подсчетом баллов по данному критерию. Принимает и отправляет - JSON. Результат вычисления содержится в сущности ResultEntity в поле result.")
-    public ResponseEntity<ResultEntity> CalculateHeartScore(@RequestBody @Parameter(name = "Параметры для шкалы HEART") HeartParams params){
+    public ResultEntity CalculateHeartScore(@RequestBody @Valid @Parameter(name = "Параметры для шкалы HEART") HeartParams params){
         log.info("Heart Params - {}", params);
-        ResultEntity result = heartService.ResultCalculationToScore(params);
+        ResultEntity result = heartService.CalculateScore(params);
         log.info("CalcResult - {}", result);
-        return new ResponseEntity<ResultEntity>(result, HttpStatusCode.valueOf(201));
+        return result;
     }
 }
